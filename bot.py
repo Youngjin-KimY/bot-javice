@@ -85,6 +85,4 @@ def test():
     return "hello test"
 
 if __name__ == '__main__':
-    # start server : typing "python3 bot.py" in termial
-    # ./ngrok http 5000
     app.run(debug=True, host="0.0.0.0")
