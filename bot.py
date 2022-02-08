@@ -57,7 +57,7 @@ def do_lang_recognition(text : str):
     payloads = urllib.parse.urlencode(payloads)
     res = requests.post(url, data=payloads, headers=headers, timeout=5)
     result = dict(res.json())
-
+    print(result)
     return result['langCode']
 
 @bolt_app.message(re.compile("(번|words)"))
