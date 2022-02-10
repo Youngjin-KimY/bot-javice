@@ -7,15 +7,20 @@ from flask import Flask, request
 from slack_bolt import App, Say
 from slack_bolt.adapter.flask import SlackRequestHandler
 
-token = os.environ.get("SLACK_BOT_TOKEN")
-signing_secret = os.environ.get("SLACK_SIGNING_SECRET")
-naver_client_id = os.environ.get("NAVER_CLIENT_ID")
-naver_client_secret = os.environ.get("NAVER_CLIENT_SECRET")
-naver_recognition_lang_client_id = os.environ.get("NAVER_RECOGNITION_LANG_CLIENT_ID")
-naver_recognition_lang_client_secret = os.environ.get("NAVER_RECOGNITION_LANG_CLIENT_SECRET")
+from config import config_by_name
+from preprocessing import *
 
+app_config = config_by_name[os.environ.get("JAVICE_ENV")]
+
+token = app_config.token
+signing_secret = app_config.signing_secret
+naver_client_id = app_config.naver_client_id
+naver_client_secret = app_config.naver_client_secret
+naver_recognition_lang_client_id = app_config.naver_recognition_lang_client_id
+naver_recognition_lang_client_secret = app_config.naver_recognition_lang_client_secret
 
 app = Flask(__name__)
+
 bolt_app = App(token=token, signing_secret=signing_secret)
 handler = SlackRequestHandler(bolt_app)
 
@@ -25,7 +30,7 @@ def slack_events_check():
     chk = handler.handle(request)
     return chk
 
-@bolt_app.message("hello javice")
+@bolt_app.message("hello")
 def greetings(payload: dict, say: Say):
     user = payload.get('user')
     say(f"Hi <@{user}>")
@@ -34,14 +39,6 @@ def greetings(payload: dict, say: Say):
 def greetings(event:str, say: Say):
     print(event)
     say("한나님은 주인님의 완전 예쁜 여자친구이십니다.")
-
-def make_headers(id : str, secret : str):
-    return {
-        "Content-Type": "application/x-www-form-urlencoded",
-        "charset": "UTF-8",
-        "X-Naver-Client-Id": id,
-        "X-Naver-Client-Secret": secret
-    }
 
 def do_lang_recognition(text : str):
     # curl "https://openapi.naver.com/v1/papago/detectLangs" \
