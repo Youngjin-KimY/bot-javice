@@ -5,6 +5,7 @@ class config:
     naver_client_secret = os.environ.get("NAVER_CLIENT_SECRET")
     naver_recognition_lang_client_id = os.environ.get("NAVER_RECOGNITION_LANG_CLIENT_ID")
     naver_recognition_lang_client_secret = os.environ.get("NAVER_RECOGNITION_LANG_CLIENT_SECRET")
+    app_status = os.environ.get("JAVICE_ENV")
 
 class DevelopmentConfig(config):
     DEBUG = True

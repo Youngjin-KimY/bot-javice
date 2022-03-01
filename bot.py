@@ -52,10 +52,17 @@ def do_lang_recognition(text : str):
         "query": text,
     }
     payloads = urllib.parse.urlencode(payloads)
-    res = requests.post(url, data=payloads, headers=headers, timeout=5)
-    result = dict(res.json())
-    print(result)
-    return result['langCode']
+
+    ret_langcode = ''
+    try:
+        res = requests.post(url, data=payloads, headers=headers, timeout=5)
+        result = dict(res.json())
+        print(result)
+        ret_langcode = result['langCode']
+    except Exception:
+        Say("error: "+result)
+
+    return ret_langcode
 
 @bolt_app.message(re.compile("(번|words)"))
 def do_translation(event : dict, say: Say):
@@ -72,11 +79,14 @@ def do_translation(event : dict, say: Say):
         "text" : text
     }
     payloads = urllib.parse.urlencode(payloads)
-    res = requests.post(url, data = payloads, headers = headers, timeout = 5)
-    res = dict(res.json())['message']['result']
-
-    say("'"+res['translatedText'] + "' 입니다.")
-
+    # print(payloads)
+    try:
+        res = requests.post(url, data = payloads, headers = headers, timeout = 5)
+        res = dict(res.json())['message']['result']
+        say("'"+res['translatedText'] + "' 입니다.")
+    except KeyError:
+        # print(res.json())
+        say("error" + str(res.json()['errMessage']))
 @app.route("/")
 def test():
     ### page test
